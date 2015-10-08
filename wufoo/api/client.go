@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/itembase/go-wufoo-api-client/wufoo"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -125,8 +124,6 @@ func (c Client) PrepareUrl(api string, params map[string]string) (urlValue strin
 
 		urlValue += "?" + getParams.Encode()
 	}
-
-	log.Println(urlValue)
 
 	return
 }
