@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"bytes"
 	"strconv"
-	"log"
 )
 
 // Client represents API client for Wufoo
