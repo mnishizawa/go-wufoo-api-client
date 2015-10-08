@@ -1,7 +1,5 @@
 package api
 
-import "github.com/itembase/go-wufoo-api-client/wufoo"
-
 // Form structure represent wufoo form details payload
 // For more details please check: http://help.wufoo.com/articles/en_US/SurveyMonkeyArticleType/The-Forms-API
 type Form struct {
@@ -30,7 +28,7 @@ type FormCollection struct {
 
 // FormsApi struct represents access to Wufoo Form API
 type FormsApi struct {
-	Client *wufoo.Client
+	Client *Client
 }
 
 // Forms method returns details about all available forms for the API key which was set up in config. It can be used
