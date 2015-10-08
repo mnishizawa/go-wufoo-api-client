@@ -4,30 +4,28 @@ import (
 	"github.com/itembase/go-wufoo-api-client/wufoo"
 	"github.com/itembase/go-wufoo-api-client/wufoo/api"
 	"log"
+	"net/url"
 )
 
-var formHash string = "hash"
+var formHash string = "form_id" // set your form hash here
 
 func main() {
-	config := wufoo.Config{"API key", "subdomain"}
-
 	client := new(api.Client)
-	client.Config = config
+	client.Config = wufoo.Config{"API key", "subdomain"} // put your values
 
-//	GetOneForm(client)
-//	GetAllForms(client)
-//	GetFormFields(client)
-//	GetFormEntries(client)
+	//	GetOneForm(client)
+	//	GetAllForms(client)
+	//	GetFormFields(client)
+	//	GetFormEntries(client)
 
-//	postData := make(map[string]string)
-//	postData = map[string]string{
-//		"Field10":  "Name",
-//		"Field11":  "Second",
-//		"Field3":   "check@itembase.api",
-//		"Field4":   "01512534976",
-//		"Field118": "Test API wrapper",
-//	}
-//	PostFormEntry(client, postData)
+	//	postData := make(url.Values)
+	//	postData.Set("Field10", "Name")
+	//	postData.Set("Field11", "Second")
+	//	postData.Set("Field3", "check@itembase.api")
+	//	postData.Set("Field4", "01512534976")
+	//	postData.Set("Field118", "Test API wrapper")
+	//
+	//	PostFormEntry(client, postData)
 }
 
 func GetAllForms(client *api.Client) {
@@ -66,7 +64,7 @@ func GetFormEntries(client *api.Client) {
 	log.Printf("Fetched form: %v", fields)
 }
 
-func PostFormEntry(client *api.Client, postData map[string]string) {
+func PostFormEntry(client *api.Client, postData url.Values) {
 	response, err := client.EntriesApi().PostEntries(formHash, postData)
 	if err != nil {
 		log.Fatalf("Unable to get form from API: %+v", err)

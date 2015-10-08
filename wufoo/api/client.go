@@ -1,13 +1,13 @@
 package api
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/itembase/go-wufoo-api-client/wufoo"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // Client represents API client for Wufoo
@@ -74,22 +74,14 @@ func (c Client) Get(api string, params map[string]string, response interface{}) 
 }
 
 // get function makes a GET request to wufoo API and returns
-func (c Client) Post(api string, postData map[string]string, response interface{}) (err error) {
-	postParams := url.Values{}
-	if len(postData) > 0 {
-		for key, value := range postData {
-			postParams.Add(key, value)
-		}
-	}
-
-	req, err := http.NewRequest("POST", c.PrepareUrl(api, nil), bytes.NewBufferString(postParams.Encode()))
+func (c Client) Post(api string, postData url.Values, response interface{}) (err error) {
+	req, err := http.NewRequest("POST", c.PrepareUrl(api, nil), strings.NewReader(postData.Encode()))
 	if err != nil {
 		return
 	}
 
 	req.SetBasicAuth(c.Config.ApiKey, "footastic")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.PostForm = postParams
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

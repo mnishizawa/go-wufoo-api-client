@@ -1,6 +1,9 @@
 package api
 
-import "strconv"
+import (
+	"net/url"
+	"strconv"
+)
 
 // FieldCollection structure represents Wufoo Field API response
 type EntriesCollection struct {
@@ -19,7 +22,7 @@ type PostEntrieResponse struct {
 	EntryLink   string
 	ErrorText   string
 	FieldErrors []struct {
-		ID        int
+		ID        string
 		ErrorText string
 	}
 }
@@ -46,7 +49,7 @@ func (api EntriesApi) EntriesReport(formIdentifier string, page int, perPage int
 //
 // For more details please visit: http://help.wufoo.com/articles/en_US/SurveyMonkeyArticleType/The-Entries-POST-API
 //
-func (api EntriesApi) PostEntries(formIdentifier string, postData map[string]string) (*PostEntrieResponse, error) {
+func (api EntriesApi) PostEntries(formIdentifier string, postData url.Values) (*PostEntrieResponse, error) {
 	response := new(PostEntrieResponse)
 	err := api.Client.Post("forms/"+formIdentifier+"/entries", postData, response)
 	return response, err
