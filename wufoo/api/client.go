@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/itembase/go-wufoo-api-client/wufoo"
+	"github.com/mnishizawa/go-wufoo-api-client/wufoo"
 	"io/ioutil"
 	"net/http"
 	"net/url"

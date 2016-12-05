@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/itembase/go-wufoo-api-client/wufoo"
-	"github.com/itembase/go-wufoo-api-client/wufoo/api"
+	"github.com/mnishizawa/go-wufoo-api-client/wufoo"
+	"github.com/mnishizawa/go-wufoo-api-client/wufoo/api"
 	"log"
 	"net/url"
 )
