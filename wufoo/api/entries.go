@@ -27,12 +27,33 @@ type PostEntrieResponse struct {
 	}
 }
 
+type FilterGroup struct {
+	Filters []Filter
+	Grouping string
+}
+
+type Filter struct {
+	FieldId string
+	Operator string
+	MatchValue string
+}
+
+type Sort struct {
+	FieldId string
+	Direction string
+}
+
+type Page struct {
+	Offset int
+	Size int
+}
+
 // Fields method returns form fields details.
 //
 // For more details please visit: http://help.wufoo.com/articles/en_US/SurveyMonkeyArticleType/The-Entries-POST-API
 //
-func (api EntriesApi) Entries(formIdentifier string, page int, perPage int) (collection *EntriesCollection, err error) {
-	collection, err = api.request("forms/"+formIdentifier+"/entries", page, perPage)
+func (api EntriesApi) Entries(formIdentifier string, filters *FilterGroup, sort *Sort, page *Page) (collection *EntriesCollection, err error) {
+	collection, err = api.request("forms/"+formIdentifier+"/entries", filters, sort, page)
 	return
 }
 
@@ -40,8 +61,8 @@ func (api EntriesApi) Entries(formIdentifier string, page int, perPage int) (col
 //
 // For more details please visit: http://help.wufoo.com/articles/en_US/SurveyMonkeyArticleType/The-Entries-POST-API
 //
-func (api EntriesApi) EntriesReport(formIdentifier string, page int, perPage int) (collection *EntriesCollection, err error) {
-	collection, err = api.request("reports/"+formIdentifier+"/entries", page, perPage)
+func (api EntriesApi) EntriesReport(formIdentifier string, filters *FilterGroup, sort *Sort, page *Page) (collection *EntriesCollection, err error) {
+	collection, err = api.request("reports/"+formIdentifier+"/entries", filters, sort, page)
 	return
 }
 
@@ -56,12 +77,25 @@ func (api EntriesApi) PostEntries(formIdentifier string, postData url.Values) (*
 }
 
 // request is internal method to make a request to get fields list
-func (api EntriesApi) request(apiUrl string, page int, perPage int) (*EntriesCollection, error) {
+func (api EntriesApi) request(apiUrl string, filters *FilterGroup, sort *Sort, page *Page) (*EntriesCollection, error) {
 	params := make(map[string]string)
 
-	if page > 0 && perPage > 0 {
-		params["pageStart"] = strconv.Itoa(page - 1)
-		params["pageSize"] = strconv.Itoa(perPage)
+	if page != nil {
+		params["pageStart"] = strconv.Itoa(page.Offset - 1)
+		params["pageSize"] = strconv.Itoa(page.Size)
+	}
+
+	if sort != nil {
+		params["sort"] = sort.FieldId
+		params["sortDirection"] = sort.Direction
+	}
+
+	if filters != nil {
+		for idx, filter := range filters.Filters {
+			params["Filter"+strconv.Itoa(idx)] = filter.FieldId+"+"+filter.Operator+"+"+filter.MatchValue
+		}
+
+		params["match"] = filters.Grouping
 	}
 
 	collection := EntriesCollection{make([]map[string]interface{}, 0)}

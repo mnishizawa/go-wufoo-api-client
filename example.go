@@ -56,7 +56,9 @@ func GetFormFields(client *api.Client) {
 }
 
 func GetFormEntries(client *api.Client) {
-	fields, err := client.EntriesApi().Entries(formHash, 1, 10)
+
+	page := api.Page{1, 10}
+	fields, err := client.EntriesApi().Entries(formHash, nil, nil, &page)
 	if err != nil {
 		log.Fatalf("Unable to get form from API: %+v", err)
 	}
