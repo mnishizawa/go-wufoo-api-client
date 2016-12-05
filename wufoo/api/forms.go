@@ -51,7 +51,7 @@ func (api FormsApi) Forms(includeTodayCount bool) (*FormCollection, error) {
 
 	collection := FormCollection{make([]Form, 0)}
 
-	err := api.Client.Get("forms", params, &collection)
+	err := api.Client.Get("forms", params, nil, &collection)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (api FormsApi) FormsDetails(formIdentifier string, includeTodayCount bool) 
 
 	collection := FormCollection{make([]Form, 0)}
 
-	err := api.Client.Get("forms/"+formIdentifier, params, &collection)
+	err := api.Client.Get("forms/"+formIdentifier, params, nil, &collection)
 	if err != nil {
 		return nil, err
 	}

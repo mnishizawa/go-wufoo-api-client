@@ -80,7 +80,7 @@ func (api FieldsApi) request(apiUrl string, system bool) (*FieldCollection, erro
 
 	collection := FieldCollection{make([]Field, 0)}
 
-	err := api.Client.Get(apiUrl, params, &collection)
+	err := api.Client.Get(apiUrl, params, nil, &collection )
 	if err != nil {
 		return nil, err
 	}

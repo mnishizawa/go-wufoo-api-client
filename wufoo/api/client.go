@@ -47,8 +47,8 @@ func (c *Client) EntriesApi() *EntriesApi {
 }
 
 // get function makes a GET request to wufoo API and returns
-func (c Client) Get(api string, params map[string]string, response interface{}) (err error) {
-	req, err := http.NewRequest("GET", c.PrepareUrl(api, params), nil)
+func (c Client) Get(api string, params map[string]string, filters *FilterGroup, response interface{}) (err error) {
+	req, err := http.NewRequest("GET", c.PrepareUrl(api, params, filters), nil)
 	if err != nil {
 		return
 	}
@@ -76,7 +76,7 @@ func (c Client) Get(api string, params map[string]string, response interface{}) 
 
 // get function makes a GET request to wufoo API and returns
 func (c Client) Post(api string, postData url.Values, response interface{}) (err error) {
-	req, err := http.NewRequest("POST", c.PrepareUrl(api, nil), bytes.NewBufferString(postData.Encode()))
+	req, err := http.NewRequest("POST", c.PrepareUrl(api, nil, nil), bytes.NewBufferString(postData.Encode()))
 	if err != nil {
 		return
 	}
@@ -107,8 +107,12 @@ func (c Client) Post(api string, postData url.Values, response interface{}) (err
 }
 
 // prepareUrl function returns URL for specific API with GET parameters if specified
-func (c Client) PrepareUrl(api string, params map[string]string) (urlValue string) {
+func (c Client) PrepareUrl(api string, params map[string]string, filters *FilterGroup) (urlValue string) {
 	urlValue = fmt.Sprintf(wufoo.WUFOO_API_URL_PATTERN, c.Config.Subdomain, api)
+
+	if (params != nil && len(params) > 0) || (filters != nil && filters.Size() > 0) {
+		urlValue += "?"
+	}
 
 	if params != nil && len(params) > 0 {
 		getParams := url.Values{}
@@ -116,8 +120,14 @@ func (c Client) PrepareUrl(api string, params map[string]string) (urlValue strin
 			getParams.Add(key, value)
 		}
 
-		urlValue += "?" + getParams.Encode()
+		urlValue += getParams.Encode()
 	}
+
+	if filters != nil && filters.Size() > 0 {
+		urlValue += filters.QueryString()
+	}
+
+	fmt.Println("URL:", urlValue)
 
 	return
 }

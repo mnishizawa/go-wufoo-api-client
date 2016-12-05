@@ -28,24 +28,47 @@ type PostEntrieResponse struct {
 }
 
 type FilterGroup struct {
-	Filters []Filter
+	Filters  []Filter
 	Grouping string
 }
 
 type Filter struct {
-	FieldId string
-	Operator string
+	FieldId    string
+	Operator   string
 	MatchValue string
 }
 
 type Sort struct {
-	FieldId string
+	FieldId   string
 	Direction string
 }
 
 type Page struct {
 	Offset int
-	Size int
+	Size   int
+}
+
+func (grp FilterGroup) Size() int {
+	return len(grp.Filters)
+}
+
+func (grp FilterGroup) QueryString() string {
+	//append filters unencoded to the url
+	var url string
+	numFilters := len(grp.Filters)
+
+	if grp.Filters != nil && grp.Size() > 0 {
+		for idx, filter := range grp.Filters {
+			filterSpec := "Filter" + strconv.Itoa(idx+1) + "=" + filter.FieldId + "+" + filter.Operator + "+" + filter.MatchValue
+			url += filterSpec
+			if idx < numFilters {
+				url += "&"
+			}
+		}
+		url += "match=" + grp.Grouping
+	}
+
+	return url
 }
 
 // Fields method returns form fields details.
@@ -90,17 +113,17 @@ func (api EntriesApi) request(apiUrl string, filters *FilterGroup, sort *Sort, p
 		params["sortDirection"] = sort.Direction
 	}
 
-	if filters != nil {
-		for idx, filter := range filters.Filters {
-			params["Filter"+strconv.Itoa(idx)] = filter.FieldId+"+"+filter.Operator+"+"+filter.MatchValue
-		}
-
-		params["match"] = filters.Grouping
-	}
+	//if filters != nil {
+	//	for idx, filter := range filters.Filters {
+	//		params["Filter"+strconv.Itoa(idx)] = filter.FieldId+"+"+filter.Operator+"+"+filter.MatchValue
+	//	}
+	//
+	//	params["match"] = filters.Grouping
+	//}
 
 	collection := EntriesCollection{make([]map[string]interface{}, 0)}
 
-	err := api.Client.Get(apiUrl, params, &collection)
+	err := api.Client.Get(apiUrl, params, filters, &collection)
 	if err != nil {
 		return nil, err
 	}
